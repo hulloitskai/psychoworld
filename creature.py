@@ -1,7 +1,14 @@
-from typing import List
+from __future__ import annotations
+
+from logging import Logger, INFO
+from world import World
+
+import util
 
 
 class Creature:
+    logger: Logger
+
     "The name of the creature."
     name: str
 
@@ -19,11 +26,12 @@ class Creature:
 
     def __init__(self, name: str):
         self.name = name
+        self.logger = util.create_logger(f"Creature({name})")
 
     def __str__(self) -> str:
         return f"Creature(name: {self.name})"
 
-    def tick(self, world: "World"):
+    def tick(self, world: World):
         dying = False
 
         # Respond to hunger.
@@ -42,17 +50,19 @@ class Creature:
         # Respond to health.
         if self.health == 0:
             self.last_words()
-            creatures: List["Creature"] = world.creatures
-            creatures.remove(self)
+            world.kill_creature(self)
+
+    def say(self, msg: str):
+        self.logger.log(INFO, msg)
 
     def hungry(self):
-        print(f"{self.name} is hungry. (hunger = {self.hunger})")
+        self.say(f"I'm hungry. (hunger = {self.hunger})")
 
     def dying(self):
-        print(f"{self.name} is dying. (health = {self.health})")
+        self.say(f"I'm dying! (health = {self.health})")
 
     def last_words(self):
-        print(f"{self.name} is dead.")
+        self.say(f"Good night, sweet prince.")
 
 
 class SmallPeePee(Creature):
@@ -60,5 +70,4 @@ class SmallPeePee(Creature):
         super(SmallPeePee, self).__init__("u/small_peepee")
 
     def last_words(self):
-        print(f"{self.name} I wish I had GF...")
-        super(SmallPeePee, self).last_words()
+        self.say(f"{self.name} I wish I had GF...")

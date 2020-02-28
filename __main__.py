@@ -17,10 +17,8 @@ if __name__ == "__main__":
     small.health = 3
 
     # Populate the world.
-    creatures = world.creatures
-    creatures.append(owya)
-    creatures.append(small)
-    # creatures.append(Creature("Stoven"))
+    world.add_creature(owya)
+    world.add_creature(small)
 
     # Game loop.
     while True:
